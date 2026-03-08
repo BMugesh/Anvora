@@ -41,9 +41,14 @@ export const Navbar = () => {
                 </div>
 
                 {/* CTA Button */}
-                <button className="hidden md:block px-6 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-anvora-gold/50 text-white text-sm font-medium transition-all duration-300">
+                <a
+                    href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hidden md:block px-6 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-anvora-gold/50 text-white text-sm font-medium transition-all duration-300"
+                >
                     Start Project
-                </button>
+                </a>
             </div>
         </motion.nav>
     );

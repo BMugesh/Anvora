@@ -182,7 +182,7 @@ export const Hero = ({ showIntro = false }: HeroProps) => {
                     transition={{ duration: 0.8, delay: baseDelay + 1.6, ease: "easeOut" }}
                 >
                     <motion.a
-                        href="https://wa.me/YOURNUMBER?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
+                        href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
                         target="_blank"
                         rel="noreferrer"
                         className="group relative px-10 py-5 bg-white rounded-full font-bold text-lg transition-all duration-300 flex items-center gap-4 overflow-hidden"
