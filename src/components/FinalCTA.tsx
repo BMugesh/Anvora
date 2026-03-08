@@ -39,7 +39,7 @@ export const FinalCTA = () => {
                         transition={{ duration: 3, repeat: Infinity }}
                     />
                     <a
-                        href="https://wa.me/YOURNUMBER?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
+                        href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
                         target="_blank"
                         rel="noreferrer"
                         className="relative px-12 py-5 bg-white text-anvora-black font-bold text-lg rounded-full overflow-hidden group hover:scale-105 transition-transform duration-300 shadow-[0_0_40px_rgba(255,255,255,0.3)]"
