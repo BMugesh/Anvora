@@ -4,16 +4,16 @@ import { ExternalLink } from 'lucide-react';
 
 const projects = [
     {
-        title: "JeskoJets",
-        category: "Luxury Aviation",
-        image: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?q=80&w=2070&auto=format&fit=crop",
+        title: "HealthPulse",
+        category: "Healthcare Technology",
+        image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop",
         status: "Live",
-        link: "#"
+        link: "https://health-care-eta-liard.vercel.app/"
     },
     {
-        title: "Vanguard Architecture",
-        category: "Real Estate",
-        image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2700&auto=format&fit=crop",
+        title: "Akshaya Akademics",
+        category: "Global Education & Admissions",
+        image: "/akshaya-logo.png",
         status: "Under Construction",
         link: "#"
     }
@@ -53,8 +53,14 @@ export const Portfolio = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                     {projects.map((project, index) => (
-                        <motion.div
+                        <a
                             key={index}
+                            href={project.link !== '#' ? project.link : undefined}
+                            target={project.link !== '#' ? '_blank' : undefined}
+                            rel="noopener noreferrer"
+                            className="block"
+                        >
+                        <motion.div
                             initial={{ opacity: 0, y: 50 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -63,7 +69,7 @@ export const Portfolio = () => {
                         >
                             {/* Image Background */}
                             <div
-                                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
+                                className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-110"
                                 style={{ backgroundImage: `url(${project.image})` }}
                             />
 
@@ -84,7 +90,7 @@ export const Portfolio = () => {
                                 </h4>
 
                                 <div className="flex items-center gap-2 text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                                    <span>View Case Study</span>
+                                    <span>{project.status === 'Live' ? 'Visit Site' : 'Coming Soon'}</span>
                                     <ExternalLink className="w-4 h-4" />
                                 </div>
                             </div>
@@ -93,6 +99,7 @@ export const Portfolio = () => {
                             <div className="absolute inset-0 border border-white/10 group-hover:border-anvora-gold/50 rounded-3xl transition-colors duration-500 pointer-events-none" />
                             <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-[0_0_30px_rgba(251,191,36,0.1)] pointer-events-none" />
                         </motion.div>
+                        </a>
                     ))}
                 </div>
             </div>
