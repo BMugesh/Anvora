@@ -1,230 +1,301 @@
-
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
 
 interface HeroProps {
     showIntro?: boolean;
 }
 
-export const Hero = ({ showIntro = false }: HeroProps) => {
-    const { scrollY } = useScroll();
-    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-    const opacity = useTransform(scrollY, [0, 300], [1, 0]);
-    const scale = useTransform(scrollY, [0, 300], [1, 0.9]);
+// Cinematic orbital SVG
+const OrbitalCore = () => (
+    <div className="relative w-full h-full flex items-center justify-center">
+        {/* Outermost ring */}
+        <motion.div
+            className="absolute w-[480px] h-[480px] rounded-full"
+            style={{ border: '1px solid rgba(124,58,237,0.1)' }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+        >
+            {/* Ring node */}
+            <div
+                className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
+                style={{ background: 'rgba(139,92,246,0.6)', boxShadow: '0 0 10px rgba(139,92,246,0.8)' }}
+            />
+        </motion.div>
 
-    // Cinematic delay offsets — after loading screen exits
-    const baseDelay = showIntro ? 0.3 : 0;
+        {/* Middle ring */}
+        <motion.div
+            className="absolute w-[340px] h-[340px] rounded-full"
+            style={{ border: '1px solid rgba(6,182,212,0.08)' }}
+            animate={{ rotate: -360 }}
+            transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
+        >
+            <div
+                className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+                style={{ background: 'rgba(6,182,212,0.5)', boxShadow: '0 0 8px rgba(6,182,212,0.7)' }}
+            />
+        </motion.div>
+
+        {/* Inner ring */}
+        <motion.div
+            className="absolute w-[220px] h-[220px] rounded-full"
+            style={{ border: '1px solid rgba(124,58,237,0.12)' }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+        >
+            <div
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1 h-1 rounded-full"
+                style={{ background: 'rgba(139,92,246,0.7)' }}
+            />
+        </motion.div>
+
+        {/* Core sphere */}
+        <motion.div
+            className="relative w-28 h-28 rounded-full"
+            style={{
+                background: 'radial-gradient(circle at 35% 35%, rgba(139,92,246,0.3), rgba(124,58,237,0.08) 60%, transparent)',
+                border: '1px solid rgba(139,92,246,0.2)',
+                boxShadow: '0 0 60px rgba(124,58,237,0.15), inset 0 0 30px rgba(124,58,237,0.08)',
+            }}
+            animate={{ scale: [1, 1.04, 1] }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        >
+            {/* Equator line */}
+            <div
+                className="absolute top-1/2 left-0 right-0 h-[1px] -translate-y-1/2"
+                style={{ background: 'rgba(139,92,246,0.15)' }}
+            />
+            {/* Meridian */}
+            <div
+                className="absolute top-0 bottom-0 left-1/2 w-[1px] -translate-x-1/2"
+                style={{ background: 'rgba(6,182,212,0.1)' }}
+            />
+            {/* Core dot */}
+            <div
+                className="absolute top-1/2 left-1/2 w-3 h-3 rounded-full -translate-x-1/2 -translate-y-1/2"
+                style={{ background: 'rgba(139,92,246,0.8)', boxShadow: '0 0 20px rgba(139,92,246,0.6)' }}
+            />
+        </motion.div>
+
+        {/* Signal grid lines */}
+        {[0, 60, 120, 180, 240, 300].map((deg, i) => (
+            <motion.div
+                key={i}
+                className="absolute"
+                style={{
+                    width: '1px',
+                    height: '240px',
+                    background: 'linear-gradient(to bottom, transparent, rgba(124,58,237,0.06) 40%, rgba(124,58,237,0.06) 60%, transparent)',
+                    transform: `rotate(${deg}deg)`,
+                    transformOrigin: 'center',
+                }}
+            />
+        ))}
+
+        {/* Ambient glow */}
+        <div
+            className="absolute w-64 h-64 rounded-full blur-3xl pointer-events-none"
+            style={{ background: 'rgba(124,58,237,0.06)' }}
+        />
+    </div>
+);
+
+export const Hero = ({ showIntro = false }: HeroProps) => {
+    const containerRef = useRef<HTMLElement>(null);
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start start', 'end start'],
+    });
+    const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+    const y       = useTransform(scrollYProgress, [0, 1],   [0, 120]);
+
+    const d = showIntro ? 0.3 : 0;
+
+    const stagger = (extra: number) => ({
+        initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
+        animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+        transition: { duration: 1.1, delay: d + extra, ease: [0.22, 1, 0.36, 1] as const },
+    });
 
     return (
-        <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-anvora-black">
-            {/* Background Effects */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                {/* Cinematic Gradient Base — fades in */}
-                <motion.div
-                    className="absolute inset-0 bg-gradient-hero"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.8 }}
-                    transition={{ duration: 1.5, delay: baseDelay, ease: "easeOut" }}
-                />
+        <section
+            ref={containerRef}
+            className="relative min-h-screen w-full flex items-center overflow-hidden"
+            style={{ background: 'var(--c-void)' }}
+        >
+            {/* Noise */}
+            <div className="noise-overlay" />
 
-                {/* Moving Light Beams */}
-                <motion.div
-                    className="absolute top-[-20%] left-[-10%] w-[80%] h-[80%] rounded-full blur-[150px]"
-                    style={{ background: "hsl(243 80% 55% / 0.1)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{
-                        opacity: [0, 0.3, 0.5, 0.3],
-                        scale: [1, 1.2, 1],
-                        rotate: [0, 10, 0]
-                    }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear", delay: baseDelay }}
-                />
-                <motion.div
-                    className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] rounded-full blur-[120px]"
-                    style={{ background: "hsl(42 92% 55% / 0.05)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{
-                        opacity: [0, 0.2, 0.4, 0.2],
-                        scale: [1, 1.1, 1],
-                        x: [0, -20, 0]
-                    }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: baseDelay }}
-                />
-
-                {/* Grid Overlay */}
-                <motion.div
-                    className="absolute inset-0 opacity-0"
-                    animate={{ opacity: 0.03 }}
-                    transition={{ duration: 2, delay: baseDelay + 0.5 }}
-                    style={{
-                        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
-                        backgroundSize: '100px 100px'
-                    }}
-                />
-
-                {/* Enhanced Particles */}
-                <motion.div style={{ y: y1 }} className="absolute inset-0">
-                    {[...Array(30)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            className="absolute bg-white rounded-full"
-                            style={{
-                                width: Math.random() * 2 + 1 + 'px',
-                                height: Math.random() * 2 + 1 + 'px',
-                                top: Math.random() * 100 + '%',
-                                left: Math.random() * 100 + '%',
-                                filter: `blur(${Math.random() * 1}px)`
-                            }}
-                            animate={{
-                                y: [0, Math.random() * -100 - 50],
-                                opacity: [0, 0.5, 0]
-                            }}
-                            transition={{
-                                duration: Math.random() * 10 + 10,
-                                repeat: Infinity,
-                                ease: "linear",
-                                delay: baseDelay + 1 + Math.random() * 10
-                            }}
-                        />
-                    ))}
-                </motion.div>
-            </div>
-
-            {/* Content — Camera push-forward feel via scale */}
+            {/* Radial ambient */}
             <motion.div
-                className="relative z-10 text-center px-4 max-w-5xl mx-auto"
-                style={{ opacity, scale }}
-                initial={{ scale: 1.06, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 1.8, delay: baseDelay, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse 70% 55% at 65% 50%, rgba(124,58,237,0.07) 0%, transparent 70%)',
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 2, delay: d }}
+            />
+
+            {/* Fine grid */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    backgroundImage: `
+                        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '80px 80px',
+                    opacity: 0.4,
+                    maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)',
+                }}
+            />
+
+            {/* Content */}
+            <motion.div
+                className="relative z-10 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-16 items-center pt-24 pb-16"
+                style={{ opacity, y }}
             >
-                <div className="mb-8 flex items-center justify-center gap-4">
-                    <motion.div
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: 80, opacity: 1 }}
-                        transition={{ duration: 1.5, delay: baseDelay + 0.5, ease: "easeOut" }}
-                        className="h-[1px] bg-gradient-to-r from-transparent via-anvora-gold to-transparent"
-                    />
-                    <motion.span
-                        initial={{ opacity: 0, letterSpacing: "0.5em" }}
-                        animate={{ opacity: 1, letterSpacing: "0.3em" }}
-                        transition={{ duration: 1.5, delay: baseDelay + 0.5, ease: "easeOut" }}
-                        className="text-anvora-gold text-xs md:text-sm font-medium uppercase tracking-[0.3em]"
+                {/* Left — Typography */}
+                <div className="flex flex-col gap-8">
+                    {/* Studio label */}
+                    <motion.div {...stagger(0)} className="flex items-center gap-3">
+                        <div className="w-8 h-[1px]" style={{ background: 'var(--c-violet-soft)' }} />
+                        <span className="section-label">Cinematic Web Architecture Studio</span>
+                    </motion.div>
+
+                    {/* Headline */}
+                    <div className="overflow-hidden">
+                        <motion.h1
+                            className="font-display font-extrabold leading-[0.92] tracking-tight"
+                            style={{ fontSize: 'clamp(3rem, 6vw, 6rem)' }}
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1.2, delay: d + 0.15, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                            <span style={{ color: 'var(--c-white)' }}>WE ENGINEER</span>
+                            <br />
+                            <span
+                                className="text-grad-cinematic"
+                                style={{ display: 'inline-block' }}
+                            >
+                                DIGITAL
+                            </span>
+                            <br />
+                            <span style={{ color: 'var(--c-white)' }}>AUTHORITY.</span>
+                        </motion.h1>
+                    </div>
+
+                    {/* Sub */}
+                    <motion.p
+                        {...stagger(0.5)}
+                        className="font-body font-light leading-relaxed max-w-md"
+                        style={{ fontSize: '1.0625rem', color: 'var(--c-muted)' }}
                     >
-                        Welcome to the Future
-                    </motion.span>
+                        Cinematic websites and identity systems for startups, creators,
+                        and brands that refuse to blend in.
+                    </motion.p>
+
+                    {/* CTAs */}
                     <motion.div
-                        initial={{ width: 0, opacity: 0 }}
-                        animate={{ width: 80, opacity: 1 }}
-                        transition={{ duration: 1.5, delay: baseDelay + 0.5, ease: "easeOut" }}
-                        className="h-[1px] bg-gradient-to-r from-transparent via-anvora-gold to-transparent"
-                    />
+                        {...stagger(0.7)}
+                        className="flex flex-wrap items-center gap-4"
+                    >
+                        <a
+                            href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn-primary group"
+                            data-magnetic
+                        >
+                            Initiate Project
+                            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                        </a>
+                        <a href="#work" className="btn-ghost" data-magnetic>
+                            View Systems
+                        </a>
+                    </motion.div>
+
+                    {/* Metrics row */}
+                    <motion.div
+                        {...stagger(0.9)}
+                        className="flex items-center gap-8 pt-4 border-top-subtle"
+                    >
+                        {[
+                            { n: '3+',   l: 'Projects Delivered' },
+                            { n: '100%', l: 'Client Satisfaction' },
+                            { n: '∞',    l: 'Digital Authority' },
+                        ].map(({ n, l }) => (
+                            <div key={l} className="flex flex-col gap-0.5">
+                                <span
+                                    className="font-display font-bold text-xl"
+                                    style={{ color: 'var(--c-white)' }}
+                                >
+                                    {n}
+                                </span>
+                                <span
+                                    className="font-body text-[10px] tracking-[0.12em] uppercase"
+                                    style={{ color: 'var(--c-dim)' }}
+                                >
+                                    {l}
+                                </span>
+                            </div>
+                        ))}
+                    </motion.div>
                 </div>
 
-                {/* Phase 2 — Headline with blur-to-sharp reveal */}
-                <motion.h1
-                    className="text-4xl md:text-8xl lg:text-9xl font-display font-bold leading-[0.9] tracking-tighter mb-8"
-                    style={{ color: "hsl(0 0% 100%)" }}
-                    initial={{ y: 8, opacity: 0, filter: "blur(4px)" }}
-                    animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                    transition={{ duration: 0.9, delay: baseDelay + 0.6, ease: [0.22, 1, 0.36, 1] }}
-                >
-                    {"Build Bold.".split("").map((char, i) => (
-                        <motion.span
-                            key={`a-${i}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: baseDelay + 0.6 + i * 0.03, duration: 0.3 }}
-                        >
-                            {char}
-                        </motion.span>
-                    ))}
-                    <br />
-                    <span className="text-gradient-cinematic relative inline-block">
-                        {"Rise Digital.".split("").map((char, i) => (
-                            <motion.span
-                                key={`b-${i}`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: baseDelay + 0.9 + i * 0.03, duration: 0.3 }}
-                            >
-                                {char}
-                            </motion.span>
-                        ))}
-                        <motion.div
-                            className="absolute -inset-1 blur-xl rounded-full"
-                            style={{ background: "hsl(243 80% 55% / 0.2)" }}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: baseDelay + 1.5, duration: 1 }}
-                        />
-                    </span>
-                </motion.h1>
-
-                {/* Phase 3 — Subtext */}
-                <motion.p
-                    className="text-lg md:text-2xl max-w-3xl mx-auto mb-16 font-light leading-relaxed"
-                    style={{ color: "hsl(0 0% 100% / 0.55)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1.2, delay: baseDelay + 1.2, ease: "easeOut" }}
-                >
-                    We engineer digital presence. <br />
-                    <span style={{ color: "hsl(0 0% 100% / 0.7)" }}>Not templates. Not noise. Real impact.</span> <br />
-                    Built for those who refuse to be ignored.
-                </motion.p>
-
-                {/* Phase 4 — CTA */}
+                {/* Right — 3D Orbital */}
                 <motion.div
-                    className="flex flex-col md:flex-row items-center justify-center gap-6"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: baseDelay + 1.6, ease: "easeOut" }}
+                    className="relative w-full aspect-square max-w-lg mx-auto lg:mx-0 lg:ml-auto"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.5, delay: d + 0.2, ease: [0.22, 1, 0.36, 1] }}
                 >
-                    <motion.a
-                        href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group relative px-10 py-5 bg-white rounded-full font-bold text-lg transition-all duration-300 flex items-center gap-4 overflow-hidden"
-                        style={{
-                            color: "hsl(var(--anvora-black))",
-                            boxShadow: "0 0 30px rgba(255,255,255,0.1)"
-                        }}
-                        whileHover={{
-                            scale: 1.05,
-                            boxShadow: "0 0 50px rgba(255,255,255,0.3)"
-                        }}
-                    >
-                        <span className="relative z-10">Start Your Project</span>
-                        <ArrowRight className="w-5 h-5 relative z-10 group-hover:translate-x-1 transition-transform" />
-                        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/50 to-transparent skew-x-12" />
-                    </motion.a>
+                    <OrbitalCore />
 
-                    {/* Single glow pulse on CTA after entry */}
-                    <motion.div
-                        className="absolute -inset-2 rounded-full pointer-events-none"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: [0, 0.3, 0] }}
-                        transition={{ delay: baseDelay + 2.0, duration: 1.2, ease: "easeOut" }}
-                        style={{ boxShadow: "0 0 40px 10px hsl(0 0% 100% / 0.15)" }}
-                    />
+                    {/* Corner frame decoration */}
+                    {[
+                        'top-0 left-0 border-t border-l',
+                        'top-0 right-0 border-t border-r',
+                        'bottom-0 left-0 border-b border-l',
+                        'bottom-0 right-0 border-b border-r',
+                    ].map((cls, i) => (
+                        <motion.div
+                            key={i}
+                            className={`absolute w-6 h-6 ${cls}`}
+                            style={{ borderColor: 'rgba(124,58,237,0.25)' }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: d + 0.8 + i * 0.1, duration: 0.6 }}
+                        />
+                    ))}
                 </motion.div>
             </motion.div>
 
-            {/* Scroll Indicator */}
+            {/* Scroll indicator */}
             <motion.div
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: baseDelay + 2.2, duration: 1 }}
+                transition={{ delay: d + 2, duration: 1 }}
             >
-                <div className="w-[1px] h-24 relative overflow-hidden" style={{ background: "hsl(0 0% 100% / 0.08)" }}>
+                <div
+                    className="w-[1px] h-16 relative overflow-hidden"
+                    style={{ background: 'rgba(255,255,255,0.06)' }}
+                >
                     <motion.div
-                        className="absolute top-0 left-0 w-full h-1/2 bg-anvora-gold"
-                        animate={{ y: [0, 96, 0], opacity: [0, 1, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute top-0 left-0 w-full h-1/3 rounded-full"
+                        style={{ background: 'var(--c-violet-soft)' }}
+                        animate={{ y: [0, 64, 0], opacity: [0, 1, 0] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut' }}
                     />
                 </div>
+                <span
+                    className="font-body text-[9px] tracking-[0.3em] uppercase"
+                    style={{ color: 'var(--c-dim)' }}
+                >
+                    SCROLL
+                </span>
             </motion.div>
         </section>
     );
