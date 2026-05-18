@@ -1,203 +1,212 @@
 import { useEffect, useCallback, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface LoadingScreenProps {
     onComplete: () => void;
 }
 
-type DeviceTier = 'mobile' | 'tablet' | 'desktop';
-
-function getDeviceTier(): DeviceTier {
-    const w = window.innerWidth;
-    if (w < 768) return 'mobile';
-    if (w < 1024) return 'tablet';
-    return 'desktop';
-}
+const PHASES = [
+    'INITIALIZING DIGITAL PRESENCE',
+    'CALIBRATING AUTHORITY',
+    'LOADING CINEMATIC SYSTEMS',
+    'SYSTEM READY',
+];
 
 export const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
-    const [tier, setTier] = useState<DeviceTier>(getDeviceTier);
-    const [videoReady, setVideoReady] = useState(false);
+    const [phase, setPhase] = useState(0);
     const [progress, setProgress] = useState(0);
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const [exiting, setExiting] = useState(false);
     const completedRef = useRef(false);
-
-    // Re-evaluate tier on resize (edge case: orientation change)
-    useEffect(() => {
-        const onResize = () => setTier(getDeviceTier());
-        window.addEventListener('resize', onResize);
-        return () => window.removeEventListener('resize', onResize);
-    }, []);
 
     const handleEnd = useCallback(() => {
         if (completedRef.current) return;
         completedRef.current = true;
-        onComplete();
+        setExiting(true);
+        setTimeout(onComplete, 900);
     }, [onComplete]);
 
-    // ─── Mobile: 2s logo reveal + bar ───────────────────────────────────────
+    // Progress animation
     useEffect(() => {
-        if (tier !== 'mobile') return;
-        const t = setTimeout(handleEnd, 2000);
-        return () => clearTimeout(t);
-    }, [tier, handleEnd]);
-
-    // ─── Tablet: 2.5s staggered logo animation ───────────────────────────────
-    useEffect(() => {
-        if (tier !== 'tablet') return;
-        const t = setTimeout(handleEnd, 2500);
-        return () => clearTimeout(t);
-    }, [tier, handleEnd]);
-
-    // ─── Desktop: video-driven, with 8s hard cap ─────────────────────────────
-    useEffect(() => {
-        if (tier !== 'desktop') return;
-        // Hard cap — never freeze longer than 8 s
-        const cap = setTimeout(handleEnd, 8000);
-        return () => clearTimeout(cap);
-    }, [tier, handleEnd]);
-
-    // Animate progress bar for non-desktop tiers
-    useEffect(() => {
-        if (tier === 'desktop') return;
-        const duration = tier === 'mobile' ? 1800 : 2200;
+        const duration = 3200;
         const start = performance.now();
         let raf: number;
+
         const tick = (now: number) => {
             const pct = Math.min((now - start) / duration, 1);
             setProgress(pct);
-            if (pct < 1) raf = requestAnimationFrame(tick);
+            if (pct < 1) {
+                raf = requestAnimationFrame(tick);
+            } else {
+                setTimeout(handleEnd, 400);
+            }
         };
         raf = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(raf);
-    }, [tier]);
+    }, [handleEnd]);
 
-    // ─── Render ───────────────────────────────────────────────────────────────
+    // Phase text cycling
+    useEffect(() => {
+        const intervals = [0, 900, 1800, 2700];
+        const timers = intervals.map((delay, i) =>
+            setTimeout(() => setPhase(i), delay)
+        );
+        return () => timers.forEach(clearTimeout);
+    }, []);
+
+    // Hard cap
+    useEffect(() => {
+        const cap = setTimeout(handleEnd, 6000);
+        return () => clearTimeout(cap);
+    }, [handleEnd]);
+
     return (
         <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-hidden"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
+            style={{ background: '#050816' }}
             initial={{ opacity: 1 }}
-            exit={{
-                opacity: 0,
-                scale: 1.04,
-                transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
-            }}
+            animate={{ opacity: exiting ? 0 : 1 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         >
-            {/* ── MOBILE ─────────────────────────────────────────────────────── */}
-            {tier === 'mobile' && (
-                <div className="flex flex-col items-center justify-center gap-6">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.7, ease: 'easeOut' }}
-                        className="relative"
-                    >
-                        <div className="absolute inset-0 bg-anvora-indigo/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                        <img
-                            src="/logo-removebg-preview.png"
-                            alt="Anvora"
-                            className="w-24 h-auto relative z-10 drop-shadow-[0_0_12px_rgba(79,70,229,0.5)]"
-                        />
-                    </motion.div>
+            {/* Noise grain */}
+            <div className="noise-overlay" />
 
-                    {/* Thin progress bar */}
-                    <div className="w-36 h-[2px] bg-white/10 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-anvora-indigo to-anvora-gold rounded-full transition-none"
-                            style={{ width: `${progress * 100}%` }}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* ── TABLET ─────────────────────────────────────────────────────── */}
-            {tier === 'tablet' && (
-                <div className="flex flex-col items-center justify-center gap-8">
-                    <motion.div
-                        initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
-                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                        transition={{ duration: 1.0, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative"
-                    >
-                        <div className="absolute inset-0 bg-anvora-indigo/25 blur-2xl rounded-full scale-150 animate-pulse" />
-                        <img
-                            src="/logo-removebg-preview.png"
-                            alt="Anvora"
-                            className="w-28 h-auto relative z-10 drop-shadow-[0_0_14px_rgba(79,70,229,0.55)]"
-                        />
-                    </motion.div>
-
-                    <motion.p
-                        initial={{ opacity: 0, letterSpacing: '0.3em' }}
-                        animate={{ opacity: 0.5, letterSpacing: '0.45em' }}
-                        transition={{ duration: 1.1, delay: 0.3, ease: 'easeOut' }}
-                        className="text-white/50 text-[10px] uppercase tracking-widest font-light"
-                    >
-                        ANVORA INTERACTIVE
-                    </motion.p>
-
-                    {/* Progress bar */}
-                    <div className="w-44 h-[2px] bg-white/10 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-gradient-to-r from-anvora-indigo to-anvora-gold rounded-full transition-none"
-                            style={{ width: `${progress * 100}%` }}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* ── DESKTOP ────────────────────────────────────────────────────── */}
-            {tier === 'desktop' && (
-                <>
-                    <video
-                        ref={videoRef}
-                        src="/loading.mp4?v=1"
-                        autoPlay
-                        muted
-                        playsInline
-                        preload="auto"
-                        className="w-full h-full object-cover"
-                        onEnded={handleEnd}
-                        onCanPlayThrough={() => setVideoReady(true)}
-                        onError={() => {
-                            console.error('Loading video failed');
-                            handleEnd();
-                        }}
-                    />
-
-                    {/* Buffering indicator — shown only while video hasn't started */}
-                    {!videoReady && (
-                        <motion.div
-                            className="absolute inset-0 flex flex-col items-center justify-center bg-black gap-6"
-                            initial={{ opacity: 1 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0, transition: { duration: 0.4 } }}
-                        >
-                            <div className="relative">
-                                <div className="absolute inset-0 bg-anvora-indigo/20 blur-3xl rounded-full scale-150 animate-pulse" />
-                                <img
-                                    src="/logo-removebg-preview.png"
-                                    alt="Anvora"
-                                    className="w-28 h-auto relative z-10 drop-shadow-[0_0_14px_rgba(79,70,229,0.5)]"
-                                />
-                            </div>
-                            {/* Elegant spinner ring */}
-                            <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-anvora-indigo animate-spin" />
-                        </motion.div>
-                    )}
-                </>
-            )}
-
-            {/* Shared vignette crossfade on exit */}
-            <motion.div
+            {/* Background radial glow */}
+            <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background:
-                        'radial-gradient(circle at 50% 0%, hsl(243 40% 12%) 0%, hsl(235 45% 6%) 60%)',
+                    background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(124,58,237,0.08) 0%, transparent 70%)',
                 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0 }}
-                exit={{ opacity: 1, transition: { duration: 0.9, delay: 0.1 } }}
             />
+
+            {/* Orbital rings */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <motion.div
+                    className="absolute w-[400px] h-[400px] rounded-full"
+                    style={{ border: '1px solid rgba(124,58,237,0.08)' }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                />
+                <motion.div
+                    className="absolute w-[280px] h-[280px] rounded-full"
+                    style={{ border: '1px solid rgba(139,92,246,0.12)' }}
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
+                />
+                <motion.div
+                    className="absolute w-[180px] h-[180px] rounded-full"
+                    style={{ border: '1px solid rgba(6,182,212,0.08)' }}
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
+                />
+            </div>
+
+            {/* Center content */}
+            <div className="relative z-10 flex flex-col items-center gap-10">
+                {/* Logo */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.85, filter: 'blur(12px)' }}
+                    animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="relative"
+                >
+                    <div
+                        className="absolute inset-0 rounded-full blur-3xl scale-150"
+                        style={{ background: 'rgba(124,58,237,0.18)' }}
+                    />
+                    <img
+                        src="/logo-removebg-preview.png"
+                        alt="Anvora"
+                        className="relative z-10 h-16 w-auto"
+                        style={{ filter: 'drop-shadow(0 0 20px rgba(139,92,246,0.6))' }}
+                    />
+                </motion.div>
+
+                {/* Pulsing status text */}
+                <div className="relative h-5 flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                        <motion.p
+                            key={phase}
+                            initial={{ opacity: 0, y: 8, filter: 'blur(4px)' }}
+                            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                            exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+                            transition={{ duration: 0.4, ease: 'easeOut' }}
+                            className="absolute text-[10px] font-body font-medium tracking-[0.3em] uppercase"
+                            style={{ color: 'rgba(139,92,246,0.7)' }}
+                        >
+                            {PHASES[phase]}
+                        </motion.p>
+                    </AnimatePresence>
+                </div>
+
+                {/* Progress bar */}
+                <div className="w-48 h-[1px] bg-white/5 rounded-full overflow-hidden relative">
+                    <motion.div
+                        className="absolute left-0 top-0 h-full rounded-full"
+                        style={{
+                            width: `${progress * 100}%`,
+                            background: 'linear-gradient(90deg, #7C3AED, #8B5CF6, #06B6D4)',
+                        }}
+                        transition={{ duration: 0.1 }}
+                    />
+                    {/* Shimmer */}
+                    <motion.div
+                        className="absolute top-0 h-full w-8 blur-sm"
+                        style={{
+                            left: `${Math.max(0, progress * 100 - 16)}%`,
+                            background: 'rgba(139,92,246,0.6)',
+                        }}
+                    />
+                </div>
+
+                {/* Percentage */}
+                <motion.span
+                    className="text-[10px] font-body tracking-widest"
+                    style={{ color: 'rgba(248,250,252,0.2)' }}
+                >
+                    {Math.round(progress * 100)}%
+                </motion.span>
+            </div>
+
+            {/* Corner decorations */}
+            {[
+                { top: '2rem', left: '2rem', borderTop: true, borderLeft: true },
+                { top: '2rem', right: '2rem', borderTop: true, borderRight: true },
+                { bottom: '2rem', left: '2rem', borderBottom: true, borderLeft: true },
+                { bottom: '2rem', right: '2rem', borderBottom: true, borderRight: true },
+            ].map((pos, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute w-8 h-8 pointer-events-none"
+                    style={{
+                        ...pos,
+                        borderWidth: '1px',
+                        borderColor: 'rgba(124,58,237,0.25)',
+                        borderStyle: 'solid',
+                        borderTopWidth: pos.borderTop ? undefined : '0',
+                        borderBottomWidth: pos.borderBottom ? undefined : '0',
+                        borderLeftWidth: pos.borderLeft ? undefined : '0',
+                        borderRightWidth: pos.borderRight ? undefined : '0',
+                    }}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.3 + i * 0.1 }}
+                />
+            ))}
+
+            {/* Studio ID bottom */}
+            <motion.div
+                className="absolute bottom-8 left-1/2 -translate-x-1/2 text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.3 }}
+                transition={{ delay: 0.8, duration: 1 }}
+            >
+                <p
+                    className="text-[9px] tracking-[0.4em] uppercase font-body"
+                    style={{ color: 'rgba(248,250,252,0.35)' }}
+                >
+                    ANVORA · CINEMATIC WEB ARCHITECTURE STUDIO
+                </p>
+            </motion.div>
         </motion.div>
     );
 };

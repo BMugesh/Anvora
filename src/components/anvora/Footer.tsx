@@ -1,31 +1,73 @@
-import { Heart } from "lucide-react";
-
 export default function Footer() {
-  return (
-    <footer className="py-12 border-t border-border">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <a href="#home" className="font-display text-2xl font-black">
-              <span className="text-gradient-gold">Anvora</span>
-            </a>
-            <p className="text-sm text-muted-foreground mt-1">
-              Service-first digital solutions.
-            </p>
-          </div>
+    return (
+        <footer className="relative bg-void border-t border-[rgba(255,255,255,0.05)] pt-20 pb-10 overflow-hidden grain">
+            {/* Minimal Background Effect */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[200px] blur-[120px] pointer-events-none" style={{ background: 'rgba(124,58,237,0.05)' }} />
 
-          <div className="flex items-center gap-8 text-sm">
-            <a href="#home" className="text-muted-foreground hover:text-foreground transition-colors">Home</a>
-            <a href="#services" className="text-muted-foreground hover:text-foreground transition-colors">Services</a>
-            <a href="#portfolio" className="text-muted-foreground hover:text-foreground transition-colors">Portfolio</a>
-            <a href="#community" className="text-muted-foreground hover:text-foreground transition-colors">Community</a>
-          </div>
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                    {/* Brand Column */}
+                    <div className="flex flex-col gap-6 lg:col-span-2">
+                        <div className="flex items-center gap-3 group" data-magnetic>
+                            <img
+                                src="/logo-removebg-preview.png"
+                                alt="Anvora"
+                                className="h-10 w-auto opacity-90 grayscale group-hover:grayscale-0 transition-all duration-500"
+                            />
+                            <div className="flex flex-col -gap-0.5">
+                                <span className="font-display font-bold text-lg tracking-[0.12em] uppercase leading-none text-white">
+                                    ANVORA
+                                </span>
+                                <span className="font-body text-[9px] tracking-[0.2em] uppercase leading-none text-dim-cin">
+                                    WEB ARCHITECTURE STUDIO
+                                </span>
+                            </div>
+                        </div>
+                        <p className="font-body font-light text-muted-cin max-w-sm text-sm leading-relaxed">
+                            We engineer digital authority for ambitious brands. Cinematic interfaces and perception-driven web experiences.
+                        </p>
+                    </div>
 
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="w-3 h-3 text-gold" /> by Anvora © {new Date().getFullYear()}
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
+                    {/* Navigation */}
+                    <div className="flex flex-col gap-4">
+                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Systems</span>
+                        {['Process', 'Selected Work', 'The Studio'].map((link) => (
+                            <a
+                                key={link}
+                                href="#"
+                                className="font-body font-light text-sm text-muted-cin hover:text-white transition-colors duration-300 w-fit"
+                            >
+                                {link}
+                            </a>
+                        ))}
+                    </div>
+
+                    {/* Connect */}
+                    <div className="flex flex-col gap-4">
+                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Network</span>
+                        {['Instagram', 'Twitter / X', 'LinkedIn'].map((link) => (
+                            <a
+                                key={link}
+                                href="#"
+                                className="font-body font-light text-sm text-muted-cin hover:text-white transition-colors duration-300 w-fit"
+                            >
+                                {link}
+                            </a>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Bottom Bar */}
+                <div className="border-t border-[rgba(255,255,255,0.05)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p className="font-body text-[10px] tracking-[0.1em] text-dim-cin uppercase">
+                        © {new Date().getFullYear()} Anvora Studio. All rights reserved.
+                    </p>
+                    <div className="flex items-center gap-6">
+                        <a href="#" className="font-body text-[10px] tracking-[0.1em] text-dim-cin hover:text-white uppercase transition-colors">Privacy</a>
+                        <a href="#" className="font-body text-[10px] tracking-[0.1em] text-dim-cin hover:text-white uppercase transition-colors">Terms</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
 }
