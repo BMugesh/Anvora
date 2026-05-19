@@ -67,7 +67,7 @@ export const Portfolio = () => {
                                     href={sys.link !== '#' ? sys.link : undefined}
                                     target={sys.link !== '#' ? '_blank' : undefined}
                                     rel="noopener noreferrer"
-                                    className="block relative aspect-[4/3] w-full overflow-hidden rounded-sm cursor-none"
+                                    className="block relative aspect-[4/3] w-full overflow-hidden rounded-sm md:cursor-none"
                                     data-magnetic
                                 >
                                     <div
