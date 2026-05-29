@@ -1,124 +1,299 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { audioEngine } from '../utils/audioEngine';
+
+// ── Data ────────────────────────────────────────────────────────────────────
 
 const STEPS = [
-    {
-        num: '01',
-        title: 'SIGNAL',
-        desc: 'We extract your core intent. No fluff. Just the raw signal of what makes your brand dangerous. We define the narrative architecture.',
-    },
-    {
-        num: '02',
-        title: 'STRUCTURE',
-        desc: 'Wireframes morph into high-fidelity UI. Engineered for impact. Every interaction is designed to hold attention and project authority.',
-    },
-    {
-        num: '03',
-        title: 'DEPLOYMENT',
-        desc: 'We launch your system to a global edge network. Fast, secure, and dominant. You don\'t just go live; you take space.',
-    },
+  {
+    num:  '01',
+    title: 'SIGNAL',
+    desc:  'We uncover what makes you irreplaceable. The raw signal beneath the noise. Identity stripped to its essential frequency.',
+  },
+  {
+    num:  '02',
+    title: 'STRUCTURE',
+    desc:  'Architecture takes shape. Every interaction engineered for authority. Every motion designed to hold attention without asking for it.',
+  },
+  {
+    num:  '03',
+    title: 'PERMANENCE',
+    desc:  'We launch to global infrastructure. Fast. Enduring. The kind of presence that accumulates weight over time.',
+  },
 ];
 
-export const HowItWorks = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start end', 'end start'],
-    });
+// ── Step Card ────────────────────────────────────────────────────────────────
 
-    const yMove = useTransform(scrollYProgress, [0, 1], [100, -100]);
+interface StepCardProps {
+  step: (typeof STEPS)[number];
+  index: number;
+  isLast: boolean;
+}
 
-    return (
-        <section
-            id="process"
-            ref={containerRef}
-            className="py-32 relative overflow-hidden grain"
-            style={{ background: 'var(--c-void)' }}
+const StepCard: React.FC<StepCardProps> = ({ step, index, isLast }) => {
+  return (
+    <motion.div
+      className="card-imax group flex-none md:flex-1 md:min-w-0"
+      initial={{ opacity: 0, y: 36 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-8% 0px' }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      onHoverStart={() => {
+        try { audioEngine.playTick?.(); } catch { /* audioEngine optional */ }
+      }}
+      style={{
+        position: 'relative',
+        padding: '2.5rem 2rem 3rem',
+        background: 'var(--c-void, #050816)',
+        overflow: 'hidden',
+        cursor: 'default',
+      }}
+    >
+      {/* Connecting line (desktop): top horizontal bar except last */}
+      {!isLast && (
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '1px',
+            height: '100%',
+            background:
+              'linear-gradient(to bottom, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 100%)',
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Scan sweep on hover */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ scaleY: 0, opacity: 0, originY: 0 }}
+        whileHover={{ scaleY: 1, opacity: 1 }}
+        transition={{ duration: 0.45, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '1px',
+          background:
+            'linear-gradient(90deg, transparent, rgba(124,58,237,0.6), transparent)',
+          boxShadow: '0 0 12px rgba(124,58,237,0.4)',
+          pointerEvents: 'none',
+          zIndex: 10,
+        }}
+      />
+
+      {/* Node dot (shows on hover) */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ scale: 0, opacity: 0 }}
+        whileHover={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.2, ease: 'backOut' }}
+        style={{
+          position: 'absolute',
+          top: '2rem',
+          right: '2rem',
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: 'rgba(124,58,237,1)',
+          boxShadow: '0 0 10px rgba(124,58,237,0.8), 0 0 24px rgba(124,58,237,0.4)',
+        }}
+      />
+
+      {/* Phase label */}
+      <p
+        style={{
+          fontFamily: 'var(--font-body, "Satoshi", sans-serif)',
+          fontWeight: 500,
+          fontSize: '0.65rem',
+          letterSpacing: '0.3em',
+          textTransform: 'uppercase',
+          color: 'var(--c-dim, rgba(255,255,255,0.3))',
+          marginBottom: '1.5rem',
+        }}
+      >
+        PHASE {step.num}
+      </p>
+
+      {/* Title */}
+      <h3
+        style={{
+          fontFamily: 'var(--font-display, "Satoshi", sans-serif)',
+          fontWeight: 700,
+          fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
+          letterSpacing: '-0.02em',
+          color: '#ffffff',
+          marginBottom: '1.25rem',
+          transition: 'all 0.3s ease',
+        }}
+        className="group-hover:text-grad-violet"
+      >
+        {step.title}
+      </h3>
+
+      {/* Body */}
+      <p
+        style={{
+          fontFamily: 'var(--font-body, "Satoshi", sans-serif)',
+          fontWeight: 300,
+          fontSize: 'clamp(0.85rem, 1.2vw, 0.95rem)',
+          lineHeight: 1.75,
+          color: 'var(--c-muted, rgba(255,255,255,0.5))',
+        }}
+        className="font-light text-muted-cin"
+      >
+        {step.desc}
+      </p>
+
+      {/* Hover bg glow */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.05) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+    </motion.div>
+  );
+};
+
+// ── Main Component ───────────────────────────────────────────────────────────
+
+export const HowItWorks: React.FC = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  const headerY = useTransform(scrollYProgress, [0, 0.4], [20, 0]);
+  const headerO = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="process"
+      className="grain"
+      style={{
+        paddingTop:    '7rem',
+        paddingBottom: '7rem',
+        background:    'var(--c-void, #050816)',
+        position:      'relative',
+        overflow:      'hidden',
+      }}
+    >
+      {/* Ambient top glow */}
+      <div
+        aria-hidden="true"
+        style={{
+          position:   'absolute',
+          top:        '-10%',
+          left:       '50%',
+          transform:  'translateX(-50%)',
+          width:      '60%',
+          height:     '35%',
+          background: 'radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.07) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto px-8 md:px-16 lg:px-24">
+
+        {/* ── Header ───────────────────────────────────────────────── */}
+        <motion.div
+          style={{ y: headerY, opacity: headerO }}
+          className="mb-16 md:mb-20"
         >
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                {/* Header */}
-                <div className="mb-20">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-8 h-[1px]" style={{ background: 'var(--c-violet-soft)' }} />
-                        <span className="section-label">Architecture Protocol</span>
-                    </div>
-                    <h2
-                        className="font-display font-extrabold leading-[0.92] tracking-tight text-grad-cinematic"
-                        style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)' }}
-                    >
-                        THE BUILD
-                    </h2>
-                </div>
+          <p
+            style={{
+              fontFamily:    'var(--font-body, "Satoshi", sans-serif)',
+              fontWeight:    500,
+              fontSize:      '0.65rem',
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              color:         'var(--c-dim, rgba(255,255,255,0.3))',
+              marginBottom:  '1.25rem',
+            }}
+          >
+            CLASSIFIED PROTOCOL
+          </p>
 
-                {/* Steps */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-                    {/* Connecting line (desktop) */}
-                    <div
-                        className="hidden md:block absolute top-[40px] left-8 right-8 h-[1px]"
-                        style={{
-                            background: 'linear-gradient(90deg, transparent, rgba(124,58,237,0.2) 10%, rgba(124,58,237,0.2) 90%, transparent)',
-                        }}
-                    />
+          <h2
+            style={{
+              fontFamily:    'var(--font-display, "Satoshi", sans-serif)',
+              fontWeight:    700,
+              fontSize:      'clamp(2.6rem, 6vw, 6rem)',
+              letterSpacing: '-0.03em',
+              lineHeight:    1,
+              marginBottom:  '1.25rem',
+            }}
+            className="text-grad-cinematic"
+          >
+            THE BUILD
+          </h2>
 
-                    {STEPS.map((step, i) => (
-                        <motion.div
-                            key={i}
-                            className="relative group pt-6 md:pt-0"
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: '-10%' }}
-                            transition={{ duration: 0.7, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            <div className="card-cinematic p-8 h-full flex flex-col relative z-10">
-                                {/* Node dot */}
-                                <div
-                                    className="absolute -top-[5px] md:-top-[45px] left-8 w-[11px] h-[11px] rounded-full z-20 transition-all duration-500"
-                                    style={{ background: 'var(--c-void)', border: '2px solid rgba(139,92,246,0.5)' }}
-                                />
-                                <div
-                                    className="absolute -top-[5px] md:-top-[45px] left-8 w-[11px] h-[11px] rounded-full z-20 opacity-0 group-hover:opacity-100 transition-all duration-500 scale-150"
-                                    style={{ background: 'rgba(124,58,237,0.8)', boxShadow: '0 0 20px rgba(124,58,237,0.6)' }}
-                                />
+          <p
+            style={{
+              fontFamily: 'var(--font-body, "Satoshi", sans-serif)',
+              fontWeight: 300,
+              fontSize:   'clamp(0.9rem, 1.3vw, 1.05rem)',
+              color:      'var(--c-dim, rgba(255,255,255,0.3))',
+              letterSpacing: '0.05em',
+            }}
+          >
+            Three phases. One signal. Built to outlast.
+          </p>
+        </motion.div>
 
-                                {/* Content */}
-                                <div className="mb-12">
-                                    <span
-                                        className="font-body text-[10px] tracking-[0.2em] uppercase block mb-4"
-                                        style={{ color: 'var(--c-dim)' }}
-                                    >
-                                        PHASE {step.num}
-                                    </span>
-                                    <h3
-                                        className="font-display font-bold text-2xl tracking-tight transition-colors duration-300"
-                                        style={{ color: 'var(--c-white)' }}
-                                    >
-                                        <span className="group-hover:text-grad-violet inline-block transition-all duration-300">
-                                            {step.title}
-                                        </span>
-                                    </h3>
-                                </div>
-                                <p
-                                    className="font-body font-light leading-relaxed mt-auto"
-                                    style={{ fontSize: '0.9375rem', color: 'var(--c-muted)' }}
-                                >
-                                    {step.desc}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            </div>
+        {/* ── Step Cards ───────────────────────────────────────────── */}
+        {/* Desktop: connecting horizontal top line across all cards */}
+        <div
+          className="hidden md:block"
+          aria-hidden="true"
+          style={{
+            height:     '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.05) 80%, transparent)',
+            marginBottom: '-1px',
+            position:   'relative',
+            zIndex:     1,
+          }}
+        />
 
-            {/* Cinematic abstract shape */}
-            <motion.div
-                className="absolute right-0 top-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none opacity-[0.03]"
-                style={{ y: yMove }}
-            >
-                <svg viewBox="0 0 100 100" className="w-full h-full animate-spin-slower">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" strokeWidth="0.2" strokeDasharray="1 2" />
-                    <rect x="25" y="25" width="50" height="50" fill="none" stroke="#fff" strokeWidth="0.2" transform="rotate(45 50 50)" />
-                </svg>
-            </motion.div>
-        </section>
-    );
+        <div
+          style={{
+            display:  'flex',
+            flexDirection: 'column' as const,
+            gap:      '1px',
+            background: 'var(--c-border, rgba(255,255,255,0.06))',
+          }}
+          className="md:flex-row"
+        >
+          {STEPS.map((step, i) => (
+            <StepCard
+              key={step.num}
+              step={step}
+              index={i}
+              isLast={i === STEPS.length - 1}
+            />
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
 };

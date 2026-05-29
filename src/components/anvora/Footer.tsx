@@ -19,25 +19,29 @@ export default function Footer() {
                                     ANVORA
                                 </span>
                                 <span className="font-body text-[9px] tracking-[0.2em] uppercase leading-none text-dim-cin">
-                                    WEB ARCHITECTURE STUDIO
+                                    CINEMATIC PERCEPTION HOUSE
                                 </span>
                             </div>
                         </div>
                         <p className="font-body font-light text-muted-cin max-w-sm text-sm leading-relaxed">
-                            We engineer digital authority for ambitious brands. Cinematic interfaces and perception-driven web experiences.
+                            Some signals never fade. We architect digital presence built to outlast the moment and accumulate gravity over time.
                         </p>
                     </div>
 
                     {/* Navigation */}
                     <div className="flex flex-col gap-4">
-                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Systems</span>
-                        {['Process', 'Selected Work', 'The Studio'].map((link) => (
+                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Navigate</span>
+                        {[
+                            { label: 'The Process', href: '#process' },
+                            { label: 'Selected Work', href: '#work' },
+                            { label: 'Philosophy', href: '#about' }
+                        ].map((link) => (
                             <a
-                                key={link}
-                                href="#"
+                                key={link.label}
+                                href={link.href}
                                 className="font-body font-light text-sm text-muted-cin hover:text-white transition-colors duration-300 w-fit"
                             >
-                                {link}
+                                {link.label}
                             </a>
                         ))}
                     </div>
@@ -60,7 +64,7 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="border-t border-[rgba(255,255,255,0.05)] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p className="font-body text-[10px] tracking-[0.1em] text-dim-cin uppercase">
-                        © {new Date().getFullYear()} Anvora Studio. All rights reserved.
+                        © {new Date().getFullYear()} Anvora. Some signals never fade.
                     </p>
                     <div className="flex items-center gap-6">
                         <a href="#" className="font-body text-[10px] tracking-[0.1em] text-dim-cin hover:text-white uppercase transition-colors">Privacy</a>

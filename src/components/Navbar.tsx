@@ -1,144 +1,194 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
+import { audioEngine } from '../utils/audioEngine';
 
 const NAV_ITEMS = [
-    { label: 'Protocol', href: '#process' },
-    { label: 'Systems',  href: '#work' },
-    { label: 'Studio',   href: '#about' },
-    { label: 'Contact',  href: '#contact' },
+  { label: 'SYSTEMS', href: '#work' },
+  { label: 'BUILD', href: '#process' },
+  { label: 'STUDIO', href: '#about' },
 ];
 
-export const Navbar = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const { scrollY } = useScroll();
+export const Navbar: React.FC = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const [initiateHovered, setInitiateHovered] = useState(false);
 
-    useMotionValueEvent(scrollY, 'change', (latest) => {
-        setIsScrolled(latest > 60);
-    });
+  const { scrollY } = useScroll();
 
-    return (
-        <>
-            <motion.nav
-                className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
-                    isScrolled
-                        ? 'glass border-bottom-subtle py-4'
-                        : 'bg-transparent py-6'
-                }`}
-                initial={{ y: -80, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 3.5 }}
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    setScrolled(latest > 40);
+  });
+
+  return (
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: 4 }}
+      style={{
+        position: 'fixed',
+        top: 24,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        display: 'flex',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+      }}
+    >
+      <motion.div
+        animate={{
+          background: scrolled
+            ? 'rgba(8,13,26,0.75)'
+            : 'rgba(8,13,26,0.15)',
+          borderColor: scrolled
+            ? 'rgba(255,255,255,0.07)'
+            : 'rgba(255,255,255,0.05)',
+          boxShadow: scrolled
+            ? '0 20px 60px -15px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04)'
+            : 'none',
+        }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 'clamp(24px, 4vw, 48px)',
+          paddingLeft: 24,
+          paddingRight: 24,
+          paddingTop: 10,
+          paddingBottom: 10,
+          borderRadius: 9999,
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid',
+          pointerEvents: 'auto',
+        }}
+      >
+        {/* Logo */}
+        <a
+          href="/"
+          className="group"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            textDecoration: 'none',
+            transition: 'opacity 0.3s ease',
+          }}
+          onMouseEnter={() => audioEngine.playHover()}
+        >
+          <img
+            src="/logo-removebg-preview.png"
+            alt="Anvora"
+            style={{
+              height: 20,
+              width: 'auto',
+              objectFit: 'contain',
+              opacity: 0.5,
+              filter: 'drop-shadow(0 0 8px rgba(139,92,246,0.3))',
+              transition: 'opacity 0.3s ease, filter 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLImageElement).style.opacity = '1';
+              (e.currentTarget as HTMLImageElement).style.filter =
+                'drop-shadow(0 0 12px rgba(139,92,246,0.6))';
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLImageElement).style.opacity = '0.5';
+              (e.currentTarget as HTMLImageElement).style.filter =
+                'drop-shadow(0 0 8px rgba(139,92,246,0.3))';
+            }}
+          />
+        </a>
+
+        {/* Nav links */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'clamp(20px, 3vw, 40px)',
+          }}
+        >
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              onMouseEnter={() => audioEngine.playHover()}
+              onClick={() => audioEngine.playClick()}
+              style={{
+                fontFamily: "'Satoshi', 'Inter', sans-serif",
+                fontSize: 9,
+                letterSpacing: '0.25em',
+                color: 'rgba(240,242,248,0.35)',
+                textDecoration: 'none',
+                fontWeight: 500,
+                textTransform: 'uppercase',
+                transition: 'color 0.3s ease',
+              }}
+              onMouseEnterCapture={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color = '#ffffff';
+              }}
+              onMouseLeaveCapture={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color =
+                  'rgba(240,242,248,0.35)';
+              }}
             >
-                <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-                    {/* Logo */}
-                    <a href="/" className="flex items-center gap-3 group" data-magnetic>
-                        <div className="relative">
-                            <img
-                                src="/logo-removebg-preview.png"
-                                alt="Anvora"
-                                className="h-9 w-auto transition-all duration-300 group-hover:opacity-90"
-                                style={{ filter: 'drop-shadow(0 0 10px rgba(139,92,246,0.4))' }}
-                            />
-                        </div>
-                        <div className="hidden sm:flex flex-col -gap-0.5">
-                            <span
-                                className="font-display font-bold text-sm tracking-[0.12em] uppercase leading-none"
-                                style={{ color: 'var(--c-white)' }}
-                            >
-                                ANVORA
-                            </span>
-                            <span
-                                className="font-body text-[9px] tracking-[0.2em] uppercase leading-none"
-                                style={{ color: 'var(--c-dim)' }}
-                            >
-                                WEB ARCHITECTURE STUDIO
-                            </span>
-                        </div>
-                    </a>
+              {item.label}
+            </a>
+          ))}
+        </div>
 
-                    {/* Desktop nav */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {NAV_ITEMS.map((item) => (
-                            <a
-                                key={item.label}
-                                href={item.href}
-                                className="relative font-body text-[11px] font-medium tracking-[0.14em] uppercase transition-colors duration-200 group"
-                                style={{ color: 'var(--c-muted)' }}
-                                data-magnetic
-                            >
-                                <span className="group-hover:text-white transition-colors duration-200">
-                                    {item.label}
-                                </span>
-                                <span
-                                    className="absolute -bottom-1 left-0 w-0 h-[1px] group-hover:w-full transition-all duration-300"
-                                    style={{ background: 'var(--c-violet-soft)' }}
-                                />
-                            </a>
-                        ))}
-                    </div>
-
-                    {/* CTA */}
-                    <a
-                        href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hidden md:inline-flex btn-primary text-[11px] py-2.5 px-5"
-                        data-magnetic
-                    >
-                        Initiate Project
-                    </a>
-
-                    {/* Mobile hamburger */}
-                    <button
-                        className="md:hidden flex flex-col gap-1.5 p-2"
-                        onClick={() => setMobileOpen(!mobileOpen)}
-                        aria-label="Toggle menu"
-                    >
-                        <span
-                            className={`block w-5 h-[1px] transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-[5px]' : ''}`}
-                            style={{ background: 'var(--c-white)' }}
-                        />
-                        <span
-                            className={`block w-5 h-[1px] transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`}
-                            style={{ background: 'var(--c-white)' }}
-                        />
-                        <span
-                            className={`block w-5 h-[1px] transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-[5px]' : ''}`}
-                            style={{ background: 'var(--c-white)' }}
-                        />
-                    </button>
-                </div>
-
-                {/* Mobile menu */}
-                <motion.div
-                    initial={false}
-                    animate={{ height: mobileOpen ? 'auto' : 0, opacity: mobileOpen ? 1 : 0 }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="md:hidden overflow-hidden glass border-top-subtle"
-                >
-                    <div className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-4">
-                        {NAV_ITEMS.map((item) => (
-                            <a
-                                key={item.label}
-                                href={item.href}
-                                className="font-body text-sm tracking-[0.14em] uppercase py-2 border-bottom-subtle"
-                                style={{ color: 'var(--c-muted)' }}
-                                onClick={() => setMobileOpen(false)}
-                            >
-                                {item.label}
-                            </a>
-                        ))}
-                        <a
-                            href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn-primary text-center mt-2"
-                        >
-                            Initiate Project
-                        </a>
-                    </div>
-                </motion.div>
-            </motion.nav>
-        </>
-    );
+        {/* Right side CTA — INITIATE */}
+        <a
+          href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20start%20my%20project"
+          target="_blank"
+          rel="noopener noreferrer"
+          onMouseEnter={() => {
+            setInitiateHovered(true);
+            audioEngine.playHover();
+          }}
+          onMouseLeave={() => setInitiateHovered(false)}
+          onClick={() => audioEngine.playClick()}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 7,
+            textDecoration: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          {/* Status dot */}
+          <motion.div
+            animate={{
+              background: initiateHovered
+                ? 'rgba(139,92,246,0.9)'
+                : 'rgba(139,92,246,0.4)',
+              boxShadow: initiateHovered
+                ? '0 0 8px rgba(139,92,246,0.8), 0 0 16px rgba(139,92,246,0.3)'
+                : 'none',
+            }}
+            transition={{ duration: 0.25 }}
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              flexShrink: 0,
+            }}
+          />
+          <motion.span
+            animate={{
+              color: initiateHovered ? '#ffffff' : 'rgba(240,242,248,0.35)',
+            }}
+            transition={{ duration: 0.25 }}
+            style={{
+              fontFamily: "'Satoshi', 'Inter', sans-serif",
+              fontSize: 9,
+              letterSpacing: '0.25em',
+              fontWeight: 500,
+              textTransform: 'uppercase',
+            }}
+          >
+            INITIATE
+          </motion.span>
+        </a>
+      </motion.div>
+    </motion.nav>
+  );
 };

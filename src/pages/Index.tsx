@@ -2,9 +2,11 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { StoryScroll } from "@/components/StoryScroll";
 import { WhoWeAre } from "@/components/WhoWeAre";
+import { EmotionalPhilosophy } from "@/components/EmotionalPhilosophy";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Portfolio } from "@/components/Portfolio";
 import { Testimonials } from "@/components/Testimonials";
+import { CinematicSequence } from "@/components/CinematicSequence";
 import { FinalCTA } from "@/components/FinalCTA";
 import Footer from "@/components/anvora/Footer";
 
@@ -19,9 +21,11 @@ const Index = ({ showIntro = false }: IndexProps) => {
       <Hero showIntro={showIntro} />
       <StoryScroll />
       <WhoWeAre />
+      <EmotionalPhilosophy />
       <HowItWorks />
       <Portfolio />
       <Testimonials />
+      <CinematicSequence />
       <FinalCTA />
       <Footer />
     </div>
