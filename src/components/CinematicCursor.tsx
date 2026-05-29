@@ -1,6 +1,11 @@
 'use client';
 import { useEffect, useRef } from 'react';
 
+/**
+ * CINEMATIC CURSOR — IMAX Edition
+ * Snappier ring response (lerp 0.16 vs 0.12)
+ * Scales on interactive elements
+ */
 export const CinematicCursor = () => {
     const dotRef  = useRef<HTMLDivElement>(null);
     const ringRef = useRef<HTMLDivElement>(null);
@@ -20,8 +25,9 @@ export const CinematicCursor = () => {
         };
 
         const animate = () => {
-            ringX += (mouseX - ringX) * 0.12;
-            ringY += (mouseY - ringY) * 0.12;
+            // 0.16 = snappier ring (was 0.12)
+            ringX += (mouseX - ringX) * 0.16;
+            ringY += (mouseY - ringY) * 0.16;
             if (ringRef.current) {
                 ringRef.current.style.left = ringX + 'px';
                 ringRef.current.style.top  = ringY + 'px';
@@ -30,17 +36,26 @@ export const CinematicCursor = () => {
         };
 
         const onEnter = () => {
-            if (ringRef.current) ringRef.current.style.transform = 'translate(-50%,-50%) scale(1.8)';
+            if (ringRef.current) {
+                ringRef.current.style.width = '44px';
+                ringRef.current.style.height = '44px';
+                ringRef.current.style.borderColor = 'rgba(139,92,246,0.7)';
+            }
         };
         const onLeave = () => {
-            if (ringRef.current) ringRef.current.style.transform = 'translate(-50%,-50%) scale(1)';
+            if (ringRef.current) {
+                ringRef.current.style.width = '28px';
+                ringRef.current.style.height = '28px';
+                ringRef.current.style.borderColor = 'rgba(139,92,246,0.45)';
+            }
         };
 
-        window.addEventListener('mousemove', onMove);
-        document.querySelectorAll('a,button,[data-magnetic]').forEach(el => {
+        window.addEventListener('mousemove', onMove, { passive: true });
+        document.querySelectorAll('a, button, [data-magnetic]').forEach(el => {
             el.addEventListener('mouseenter', onEnter);
             el.addEventListener('mouseleave', onLeave);
         });
+
         rafId = requestAnimationFrame(animate);
 
         return () => {

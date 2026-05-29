@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { CinematicCursor } from "./components/CinematicCursor";
+import { SoundToggle } from "./components/SoundToggle";
 
 const queryClient = new QueryClient();
 
@@ -18,10 +19,10 @@ const App = () => {
   const [showLoading, setShowLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize Lenis for cinematic smooth scrolling
+    // Initialize Lenis — IMAX confident pacing. Fast luxury, not sluggish.
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutExpo
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       touchMultiplier: 2,
     });
 
@@ -40,6 +41,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <CinematicCursor />
+        <SoundToggle />
         <Toaster />
         <Sonner />
         <AnimatePresence mode="wait">
