@@ -1,12 +1,15 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { StoryScroll } from "@/components/StoryScroll";
-import { WhoWeAre } from "@/components/WhoWeAre";
-import { EmotionalPhilosophy } from "@/components/EmotionalPhilosophy";
-import { HowItWorks } from "@/components/HowItWorks";
-import { Portfolio } from "@/components/Portfolio";
-import { Testimonials } from "@/components/Testimonials";
-import { CinematicSequence } from "@/components/CinematicSequence";
+import { StudentSection } from "@/components/StudentSection";
+import { SignalArchetypes } from "@/components/SignalArchetypes";
+import { TransformationLab } from "@/components/TransformationLab";
+import { SelectedSystems } from "@/components/SelectedSystems";
+import { StudentHub } from "@/components/StudentHub";
+import { BusinessHub } from "@/components/BusinessHub";
+import { SignalEnhancements } from "@/components/SignalEnhancements";
+import { ImpactSignals } from "@/components/Testimonials";
+import { BuildingInPublic } from "@/components/BuildingInPublic";
+import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
 import Footer from "@/components/anvora/Footer";
 
@@ -19,13 +22,16 @@ const Index = ({ showIntro = false }: IndexProps) => {
     <div className="min-h-screen bg-void text-white selection:bg-violet selection:text-white">
       <Navbar />
       <Hero showIntro={showIntro} />
-      <StoryScroll />
-      <WhoWeAre />
-      <EmotionalPhilosophy />
-      <HowItWorks />
-      <Portfolio />
-      <Testimonials />
-      <CinematicSequence />
+      <StudentSection />
+      <SignalArchetypes />
+      <TransformationLab />
+      <SelectedSystems />
+      <StudentHub />
+      <BusinessHub />
+      <SignalEnhancements />
+      <ImpactSignals />
+      <BuildingInPublic />
+      <FAQ />
       <FinalCTA />
       <Footer />
     </div>

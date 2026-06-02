@@ -173,6 +173,115 @@
     box-shadow: 0 0 40px rgba(124,58,237,0.06), 0 32px 64px rgba(0,0,0,0.4);
   }
 
+  /* ── PRICING GLASS CARD ──────────────────────────────────── */
+  .card-pricing {
+    background: linear-gradient(180deg, rgba(14,20,34,0.85) 0%, rgba(8,13,26,0.95) 100%);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card-pricing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(139,92,246,0.12), transparent 70%);
+    opacity: 0.5;
+    transition: opacity 0.4s;
+  }
+  .card-pricing:hover {
+    border-color: rgba(139,92,246,0.35);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 50px rgba(139,92,246,0.1);
+  }
+
+  /* ── POPULAR GRADIENT BADGE ──────────────────────────────── */
+  .badge-popular {
+    background: linear-gradient(90deg, #7C3AED 0%, #06B6D4 100%);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.35);
+  }
+
+  /* ── WHATSAPP PREMIUM BUTTON ────────────────────────────── */
+  .btn-whatsapp {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 2rem;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(124,58,237,0.15) 100%);
+    border: 1px solid rgba(34,197,94,0.35);
+    border-radius: 4px;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+  .btn-whatsapp::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(34,197,94,0.2) 0%, rgba(124,58,237,0.25) 100%);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-whatsapp:hover::before { transform: scaleX(1); }
+  .btn-whatsapp:hover {
+    border-color: rgba(34,197,94,0.6);
+    box-shadow: 0 0 30px rgba(34,197,94,0.15);
+    transform: translateY(-1px);
+  }
+
+  /* ── SLIDER GRAPHICS ────────────────────────────────────── */
+  .slider-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    user-select: none;
+  }
+  .slider-thumb {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #ffffff;
+    cursor: ew-resize;
+    z-index: 30;
+    box-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 20px rgba(124,58,237,0.5);
+  }
+  .slider-thumb-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #080D1A;
+    border: 2px solid #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5), 0 0 10px rgba(124,58,237,0.3);
+    color: #ffffff;
+  }
+
   /* ── BORDERS ────────────────────────────────────────────── */
   .border-subtle        { border: 1px solid var(--c-border); }
   .border-active        { border: 1px solid var(--c-border-active); }

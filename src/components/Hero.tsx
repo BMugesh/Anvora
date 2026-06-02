@@ -9,7 +9,8 @@ interface HeroProps {
 export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
   const d = showIntro ? 0.2 : 0;
   const sectionRef = useRef<HTMLElement>(null);
-  const [bracketsVisible, setBracketsVisible] = useState(false);
+  const [bracketsVisible1, setBracketsVisible1] = useState(false);
+  const [bracketsVisible2, setBracketsVisible2] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -36,16 +37,8 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
     >
       {/* Noise overlay */}
       <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E")`,
-          backgroundRepeat: 'repeat',
-          backgroundSize: '200px 200px',
-          opacity: 0.4,
-          pointerEvents: 'none',
-          zIndex: 1,
-        }}
+        className="noise-overlay"
+        style={{ opacity: 0.4 }}
       />
 
       {/* Radial ambient glow */}
@@ -58,7 +51,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
           width: 900,
           height: 900,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(100,50,200,0.06) 0%, transparent 65%)',
+          background: 'radial-gradient(circle, rgba(139,92,246,0.06) 0%, transparent 65%)',
           zIndex: 1,
           pointerEvents: 'none',
         }}
@@ -83,7 +76,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             width: 800,
             height: 800,
             borderRadius: '50%',
-            border: '0.5px solid rgba(139,92,246,0.25)',
+            border: '0.5px solid rgba(139,92,246,0.2)',
             opacity: 0.1,
             animation: 'hero-spin1 80s linear infinite',
           }}
@@ -95,7 +88,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             width: 550,
             height: 550,
             borderRadius: '50%',
-            border: '0.5px solid rgba(124,58,237,0.3)',
+            border: '0.5px solid rgba(124,58,237,0.25)',
             opacity: 0.1,
             animation: 'hero-spin2 60s linear infinite',
           }}
@@ -107,7 +100,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             width: 320,
             height: 320,
             borderRadius: '50%',
-            border: '1px solid rgba(6,182,212,0.2)',
+            border: '1px solid rgba(6,182,212,0.15)',
             opacity: 0.1,
             animation: 'hero-spin1 40s linear infinite',
           }}
@@ -127,6 +120,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
           opacity: contentOpacity,
           y: contentY,
           padding: '0 24px',
+          maxWidth: 960,
         }}
       >
         {/* Studio signal label */}
@@ -138,13 +132,13 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             fontFamily: "'Satoshi', 'Inter', sans-serif",
             fontSize: 9,
             letterSpacing: '0.5em',
-            color: 'rgba(240,242,248,0.2)',
+            color: 'rgba(240,242,248,0.3)',
             fontWeight: 500,
             textTransform: 'uppercase',
-            margin: '0 0 28px 0',
+            margin: '0 0 24px 0',
           }}
         >
-          ANVORA
+          ANVORA · STUDIO SIGNAL
         </motion.p>
 
         {/* Main headline */}
@@ -152,13 +146,13 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
           initial={{ opacity: 0, filter: 'blur(14px)' }}
           animate={{ opacity: 1, filter: 'blur(0px)' }}
           transition={{ duration: 1.2, delay: d + 0.8, ease: [0.22, 1, 0.36, 1] }}
-          style={{ marginBottom: 28 }}
+          style={{ marginBottom: 24 }}
         >
           <h1
             style={{
               fontFamily: "'Satoshi', 'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(3.5rem, 9vw, 8.5rem)',
+              fontSize: 'clamp(3.2rem, 8.5vw, 8rem)',
               letterSpacing: '-0.03em',
               color: '#ffffff',
               margin: 0,
@@ -171,11 +165,11 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             style={{
               fontFamily: "'Satoshi', 'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(3.5rem, 9vw, 8.5rem)',
+              fontSize: 'clamp(3.2rem, 8.5vw, 8rem)',
               letterSpacing: '-0.03em',
               margin: 0,
               lineHeight: 1.02,
-              background: 'linear-gradient(90deg, #ffffff 0%, rgba(255,255,255,0.55) 100%)',
+              background: 'linear-gradient(90deg, #ffffff 0%, rgba(139,92,246,0.6) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -189,25 +183,56 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: d + 1.8, ease: 'easeOut' }}
+          transition={{ duration: 0.8, delay: d + 1.6, ease: 'easeOut' }}
           style={{
             fontFamily: "'Satoshi', 'Inter', sans-serif",
-            fontSize: '0.9375rem',
-            color: 'rgba(240,242,248,0.38)',
-            letterSpacing: '0.02em',
-            maxWidth: 420,
-            margin: '0 auto 32px',
+            fontSize: 'clamp(0.9rem, 2vw, 1.05rem)',
+            color: 'rgba(240,242,248,0.48)',
+            letterSpacing: '0.01em',
+            maxWidth: 680,
+            margin: '0 auto 20px',
             lineHeight: 1.65,
           }}
         >
-          We engineer presence that outlasts the moment.
+          Premium portfolios, startup websites, AI systems & digital branding designed to command trust and visibility for ambitious students and founders.
         </motion.p>
 
-        {/* CTA area */}
+        {/* Micro Trust Price Badge */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: d + 2.0, ease: 'easeOut' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            padding: '6px 14px',
+            borderRadius: 9999,
+            background: 'rgba(139, 92, 246, 0.08)',
+            border: '1px solid rgba(139, 92, 246, 0.25)',
+            marginBottom: 36,
+          }}
+        >
+          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#8B5CF6', boxShadow: '0 0 8px #8B5CF6' }}></span>
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              color: 'rgba(255, 255, 255, 0.85)',
+              textTransform: 'uppercase',
+            }}
+          >
+            Systems Starting from ₹999
+          </span>
+        </motion.div>
+
+        {/* Dual CTAs area */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: d + 2.5, ease: 'easeOut' }}
+          transition={{ duration: 0.8, delay: d + 2.4, ease: 'easeOut' }}
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -220,76 +245,142 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
             style={{
               width: 1,
               height: 32,
-              background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.1))',
+              background: 'linear-gradient(to bottom, transparent, rgba(139,92,246,0.2))',
             }}
           />
 
-          {/* CTA Button */}
-          <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
-            {/* Left bracket */}
-            <motion.span
-              animate={{ opacity: bracketsVisible ? 1 : 0, x: bracketsVisible ? 0 : 6 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                fontFamily: "'Satoshi', 'Inter', sans-serif",
-                fontSize: 10,
-                color: 'rgba(139,92,246,0.7)',
-                marginRight: 4,
-                letterSpacing: 0,
-                userSelect: 'none',
-              }}
-            >
-              [
-            </motion.span>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: 18,
+            }}
+          >
+            {/* Primary CTA: BUILD MY IDENTITY */}
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <motion.span
+                animate={{ opacity: bracketsVisible1 ? 1 : 0, x: bracketsVisible1 ? 0 : 6 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  fontFamily: "'Satoshi', sans-serif",
+                  fontSize: 10,
+                  color: '#22c55e',
+                  marginRight: 4,
+                  userSelect: 'none',
+                }}
+              >
+                [
+              </motion.span>
 
-            <motion.a
-              href="#about"
-              whileTap={{ scale: 0.97 }}
-              onClick={() => audioEngine.playClick()}
-              onMouseEnter={() => {
-                setBracketsVisible(true);
-                audioEngine.playHover();
-              }}
-              onMouseLeave={() => setBracketsVisible(false)}
-              style={{
-                display: 'inline-block',
-                fontFamily: "'Satoshi', 'Inter', sans-serif",
-                fontSize: 9,
-                letterSpacing: '0.28em',
-                color: 'rgba(240,242,248,0.7)',
-                textDecoration: 'none',
-                textTransform: 'uppercase',
-                fontWeight: 500,
-                padding: '10px 24px',
-                border: '0.5px solid rgba(255,255,255,0.1)',
-                borderRadius: 2,
-                background: 'rgba(139,92,246,0.04)',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-              }}
-              onMouseEnterCapture={() => {
-                setBracketsVisible(true);
-              }}
-            >
-              ENTER SYSTEM
-            </motion.a>
+              <motion.a
+                href="https://wa.me/+918778848565?text=Hi%20Anvora,%20I%20want%20to%20build%20my%20digital%20authority."
+                target="_blank"
+                rel="noopener noreferrer"
+                whileTap={{ scale: 0.97 }}
+                onClick={() => audioEngine.playClick()}
+                onMouseEnter={() => {
+                  setBracketsVisible1(true);
+                  audioEngine.playHover();
+                }}
+                onMouseLeave={() => setBracketsVisible1(false)}
+                style={{
+                  display: 'inline-block',
+                  fontFamily: "'Satoshi', 'Inter', sans-serif",
+                  fontSize: 9,
+                  letterSpacing: '0.25em',
+                  color: '#ffffff',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  padding: '12px 28px',
+                  border: '1px solid rgba(34, 197, 94, 0.4)',
+                  borderRadius: 4,
+                  background: 'linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(139,92,246,0.04) 100%)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 20px rgba(34,197,94,0.05)',
+                }}
+              >
+                BUILD MY IDENTITY
+              </motion.a>
 
-            {/* Right bracket */}
-            <motion.span
-              animate={{ opacity: bracketsVisible ? 1 : 0, x: bracketsVisible ? 0 : -6 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                fontFamily: "'Satoshi', 'Inter', sans-serif",
-                fontSize: 10,
-                color: 'rgba(139,92,246,0.7)',
-                marginLeft: 4,
-                letterSpacing: 0,
-                userSelect: 'none',
-              }}
-            >
-              ]
-            </motion.span>
+              <motion.span
+                animate={{ opacity: bracketsVisible1 ? 1 : 0, x: bracketsVisible1 ? 0 : -6 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  fontFamily: "'Satoshi', sans-serif",
+                  fontSize: 10,
+                  color: '#22c55e',
+                  marginLeft: 4,
+                  userSelect: 'none',
+                }}
+              >
+                ]
+              </motion.span>
+            </div>
+
+            {/* Secondary CTA: VIEW SYSTEMS */}
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <motion.span
+                animate={{ opacity: bracketsVisible2 ? 1 : 0, x: bracketsVisible2 ? 0 : 6 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  fontFamily: "'Satoshi', sans-serif",
+                  fontSize: 10,
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  marginRight: 4,
+                  userSelect: 'none',
+                }}
+              >
+                [
+              </motion.span>
+
+              <motion.a
+                href="#signals"
+                whileTap={{ scale: 0.97 }}
+                onClick={() => audioEngine.playClick()}
+                onMouseEnter={() => {
+                  setBracketsVisible2(true);
+                  audioEngine.playHover();
+                }}
+                onMouseLeave={() => setBracketsVisible2(false)}
+                style={{
+                  display: 'inline-block',
+                  fontFamily: "'Satoshi', 'Inter', sans-serif",
+                  fontSize: 9,
+                  letterSpacing: '0.25em',
+                  color: 'rgba(240,242,248,0.5)',
+                  textDecoration: 'none',
+                  textTransform: 'uppercase',
+                  fontWeight: 500,
+                  padding: '12px 28px',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 4,
+                  background: 'rgba(255,255,255,0.01)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                }}
+              >
+                VIEW SYSTEMS
+              </motion.a>
+
+              <motion.span
+                animate={{ opacity: bracketsVisible2 ? 1 : 0, x: bracketsVisible2 ? 0 : -6 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  fontFamily: "'Satoshi', sans-serif",
+                  fontSize: 10,
+                  color: 'rgba(255, 255, 255, 0.4)',
+                  marginLeft: 4,
+                  userSelect: 'none',
+                }}
+              >
+                ]
+              </motion.span>
+            </div>
           </div>
         </motion.div>
       </motion.div>
@@ -298,7 +389,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: d + 3.2, duration: 1 }}
+        transition={{ delay: d + 3.0, duration: 1 }}
         style={{
           position: 'absolute',
           bottom: 32,

@@ -24,17 +24,18 @@ export default function Footer() {
                             </div>
                         </div>
                         <p className="font-body font-light text-muted-cin max-w-sm text-sm leading-relaxed">
-                            Some signals never fade. We architect digital presence built to outlast the moment and accumulate gravity over time.
+                            We do not build websites. We engineer authority. Some signals never fade — we architect digital presence built to command trust and visibility.
                         </p>
                     </div>
 
                     {/* Navigation */}
                     <div className="flex flex-col gap-4">
-                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Navigate</span>
+                        <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Systems</span>
                         {[
-                            { label: 'The Process', href: '#process' },
-                            { label: 'Selected Work', href: '#work' },
-                            { label: 'Philosophy', href: '#about' }
+                            { label: 'Signal Matrix', href: '#signals' },
+                            { label: 'Student Hub', href: '#student-hub' },
+                            { label: 'Business Hub', href: '#business-hub' },
+                            { label: 'Build Process', href: '#process' }
                         ].map((link) => (
                             <a
                                 key={link.label}
@@ -49,13 +50,19 @@ export default function Footer() {
                     {/* Connect */}
                     <div className="flex flex-col gap-4">
                         <span className="font-body text-[10px] tracking-[0.2em] font-medium text-white uppercase mb-2">Network</span>
-                        {['Instagram', 'Twitter / X', 'LinkedIn'].map((link) => (
+                        {[
+                            { name: 'Instagram', href: 'https://instagram.com' },
+                            { name: 'LinkedIn', href: 'https://linkedin.com' },
+                            { name: 'WhatsApp Initiate', href: 'https://wa.me/+918778848565?text=Hi%20Anvora,%20I\'m%20looking%20to%20collaborate.' }
+                        ].map((link) => (
                             <a
-                                key={link}
-                                href="#"
+                                key={link.name}
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="font-body font-light text-sm text-muted-cin hover:text-white transition-colors duration-300 w-fit"
                             >
-                                {link}
+                                {link.name}
                             </a>
                         ))}
                     </div>

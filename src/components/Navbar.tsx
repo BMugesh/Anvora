@@ -3,9 +3,11 @@ import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { audioEngine } from '../utils/audioEngine';
 
 const NAV_ITEMS = [
-  { label: 'SYSTEMS', href: '#work' },
+  { label: 'SYSTEMS', href: '#signals' },
+  { label: 'STUDENT HUB', href: '#student-hub' },
+  { label: 'STARTUPS', href: '#business-hub' },
   { label: 'BUILD', href: '#process' },
-  { label: 'STUDIO', href: '#about' },
+  { label: 'RESULTS', href: '#impact' },
 ];
 
 export const Navbar: React.FC = () => {
@@ -110,7 +112,6 @@ export const Navbar: React.FC = () => {
             <a
               key={item.label}
               href={item.href}
-              onMouseEnter={() => audioEngine.playHover()}
               onClick={() => audioEngine.playClick()}
               style={{
                 fontFamily: "'Satoshi', 'Inter', sans-serif",
@@ -122,10 +123,11 @@ export const Navbar: React.FC = () => {
                 textTransform: 'uppercase',
                 transition: 'color 0.3s ease',
               }}
-              onMouseEnterCapture={(e) => {
+              onMouseEnter={(e) => {
                 (e.currentTarget as HTMLAnchorElement).style.color = '#ffffff';
+                audioEngine.playHover();
               }}
-              onMouseLeaveCapture={(e) => {
+              onMouseLeave={(e) => {
                 (e.currentTarget as HTMLAnchorElement).style.color =
                   'rgba(240,242,248,0.35)';
               }}
