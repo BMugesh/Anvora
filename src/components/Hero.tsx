@@ -119,7 +119,7 @@ export const Hero: React.FC<HeroProps> = ({ showIntro = false }) => {
           gap: 0,
           opacity: contentOpacity,
           y: contentY,
-          padding: '0 24px',
+          padding: '40px 24px 120px 24px',
           maxWidth: 960,
         }}
       >

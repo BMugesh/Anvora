@@ -1,9 +1,12 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Check, Info, MessageSquare, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, Info, MessageSquare, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export const StudentHub: React.FC = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null);
+
   const plans = [
     {
       name: 'STUDENT POCKET',
@@ -90,37 +93,36 @@ export const StudentHub: React.FC = () => {
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start max-w-6xl mx-auto">
           {plans.map((plan, i) => {
             const isHero = plan.popular;
+            const isExpanded = hoveredIndex === i || clickedIndex === i;
+
             return (
               <motion.div
                 key={plan.name}
+                layout
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
-                className={`card-pricing p-8 relative flex flex-col justify-between h-full transition-all duration-500 ${
+                className={`card-pricing p-8 relative flex flex-col justify-between transition-all duration-500 cursor-pointer overflow-visible ${
                   isHero
-                    ? 'border-violet-500/80 glow-violet shadow-[0_0_60px_rgba(139,92,246,0.15)] lg:scale-105 lg:-translate-y-2 z-20'
-                    : 'opacity-85 hover:opacity-100'
+                    ? 'border-violet-500/80 glow-violet shadow-[0_0_60px_rgba(139,92,246,0.15)] z-20'
+                    : 'opacity-85 hover:opacity-100 border border-white/5'
                 }`}
-                style={isHero ? {
-                  background: 'linear-gradient(180deg, rgba(22, 16, 48, 0.9) 0%, rgba(8, 13, 26, 0.98) 100%)',
-                } : undefined}
-                animate={isHero ? {
-                  y: [0, -6, 0]
-                } : undefined}
-                transition={isHero ? {
-                  duration: 0.6,
-                  delay: i * 0.15,
-                  y: {
-                    repeat: Infinity,
-                    duration: 4,
-                    ease: "easeInOut"
-                  }
-                } : {
-                  duration: 0.6,
-                  delay: i * 0.15
+                style={{
+                  background: isHero
+                    ? 'linear-gradient(180deg, rgba(22, 16, 48, 0.95) 0%, rgba(8, 13, 26, 0.99) 100%)'
+                    : 'rgba(8, 13, 26, 0.4)',
+                }}
+                onMouseEnter={() => {
+                  setHoveredIndex(i);
+                  audioEngine.playHover();
+                }}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => {
+                  setClickedIndex(clickedIndex === i ? null : i);
+                  audioEngine.playClick();
                 }}
               >
                 {/* Popular glow header banner */}
@@ -140,7 +142,7 @@ export const StudentHub: React.FC = () => {
                       PLAN 0{i + 1}
                     </span>
                     {isHero && (
-                      <span className="font-mono text-[8px] tracking-[0.15em] text-emerald-400 font-bold uppercase">
+                      <span className="font-mono text-[8px] tracking-[0.15em] text-emerald-400 font-bold uppercase animate-pulse">
                         // ELITE CHOICE
                       </span>
                     )}
@@ -162,50 +164,73 @@ export const StudentHub: React.FC = () => {
                     </span>
                   </div>
 
-                  {/* Hero Trust Line */}
-                  {isHero && plan.trustLine && (
-                    <div className="mb-6 p-3 rounded bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs font-body font-medium leading-relaxed">
-                      {plan.trustLine}
-                    </div>
-                  )}
-
-                  <p className="font-body font-light text-muted-cin text-xs leading-relaxed mb-8">
+                  <p className="font-body font-light text-muted-cin text-xs leading-relaxed mb-6">
                     {plan.desc}
                   </p>
 
-                  {/* Features */}
-                  <div className="space-y-4 mb-12">
-                    <span className="font-body text-[9px] tracking-[0.15em] text-dim-cin font-bold uppercase block">
-                      WHAT IS ARCHITECTED:
-                    </span>
-                    {plan.features.map((feat) => (
-                      <div key={feat} className="flex items-start gap-3">
-                        <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
-                        <span className="font-body font-light text-xs text-white/80 leading-tight">
-                          {feat}
-                        </span>
-                      </div>
-                    ))}
+                  {/* Interactive toggle instruction */}
+                  <div className="flex items-center justify-between text-[9px] font-mono text-violet-400/80 mb-6 bg-violet-500/5 py-2 px-3 rounded border border-violet-500/10">
+                    <span>{isExpanded ? '[ CLICK TO COLLAPSE ]' : '[ CLICK OR HOVER TO EXPAND ]'}</span>
+                    {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5 animate-bounce" />}
                   </div>
-                </div>
 
-                {/* WhatsApp CTA */}
-                <motion.a
-                  href={`https://wa.me/+918778848565?text=${encodeURIComponent(plan.whatsappText)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => audioEngine.playClick()}
-                  onMouseEnter={() => audioEngine.playHover()}
-                  className={`w-full flex items-center justify-center gap-3 py-3.5 rounded text-center font-semibold text-xs tracking-wider transition-all duration-300 ${
-                    isHero
-                      ? 'btn-whatsapp border-emerald-500/80 bg-emerald-500/15 shadow-[0_0_25px_rgba(34,197,94,0.25)] text-white'
-                      : 'border border-white/10 hover:border-violet-500/40 hover:bg-violet-500/5 text-white/70 hover:text-white'
-                  }`}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  <span>{plan.btnLabel}</span>
-                </motion.a>
+                  {/* Expandable Features list */}
+                  <AnimatePresence initial={false}>
+                    {isExpanded && (
+                      <motion.div
+                        key="features"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                      >
+                        {/* Hero Trust Line */}
+                        {isHero && plan.trustLine && (
+                          <div className="mb-6 p-3 rounded bg-violet-500/10 border border-violet-500/20 text-violet-200 text-xs font-body font-medium leading-relaxed">
+                            {plan.trustLine}
+                          </div>
+                        )}
+
+                        {/* Features */}
+                        <div className="space-y-4 mb-8">
+                          <span className="font-body text-[9px] tracking-[0.15em] text-dim-cin font-bold uppercase block">
+                            WHAT IS ARCHITECTED:
+                          </span>
+                          {plan.features.map((feat) => (
+                            <div key={feat} className="flex items-start gap-3">
+                              <Check className="w-3.5 h-3.5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                              <span className="font-body font-light text-xs text-white/80 leading-tight">
+                                {feat}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* WhatsApp CTA */}
+                        <motion.a
+                          href={`https://wa.me/+918778848565?text=${encodeURIComponent(plan.whatsappText)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileTap={{ scale: 0.98 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            audioEngine.playClick();
+                          }}
+                          onMouseEnter={() => audioEngine.playHover()}
+                          className={`w-full flex items-center justify-center gap-3 py-3.5 rounded text-center font-semibold text-xs tracking-wider transition-all duration-300 mb-2 ${
+                            isHero
+                              ? 'btn-whatsapp border-emerald-500/80 bg-emerald-500/15 shadow-[0_0_25px_rgba(34,197,94,0.25)] text-white'
+                              : 'border border-white/10 hover:border-violet-500/40 hover:bg-violet-500/5 text-white/70 hover:text-white'
+                          }`}
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          <span>{plan.btnLabel}</span>
+                        </motion.a>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </motion.div>
             );
           })}
